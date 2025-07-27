@@ -1,0 +1,22 @@
+version: 0.2
+
+phases:
+			  install:
+			    runtime-versions:
+			      java: corretto8
+			  build:
+			    commands:
+			      - echo "Building the Java code..."
+			      - mkdir -p webapps/WEB-INF/classes/com/example/demo
+			      - mkdir -p webapps/WEB-INF/lib
+			      - javac -classpath "lib/*" src/main/java/com/example/demo/HelloWorld.java -d webapps/WEB-INF/classes
+			      - cp lib/servlet-api.jar webapps/WEB-INF/lib/
+			  post_build:
+			    commands:
+			      - aws s3 sync webapps s3://s3-kamei-20250727/HelloWorld/
+
+artifacts:
+			  files:
+			    - webapps/**/*
+			  base-directory: webapps
+			  discard-paths: no
